@@ -22,6 +22,20 @@ MODELS = {
 }
 
 
+def show_sidebar():
+    """
+    Displays the sidebar with a selectbox to choose a model.
+    Updates the session state with the selected model type.
+    """
+    from streamlit_extras.add_vertical_space import add_vertical_space
+    with st.sidebar:
+        add_vertical_space(1)
+        st.link_button(
+            label="Overview video",
+            url="https://drive.google.com/file/d/1AUS4iz22fvuj3xRx38JI3YDX06BWDzU_/view?usp=sharing",
+            type="primary")
+
+
 def show_intro():
     """
     Displays the introduction section of the ROI Training GenAI Chat page.
@@ -96,6 +110,7 @@ def display_responses(containers: list, responses: list):
             container.write("TBD")
 
 
+show_sidebar()
 show_intro()
 
 containers = []
