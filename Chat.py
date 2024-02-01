@@ -82,7 +82,7 @@ def show_sidebar():
         st.divider()
         st.link_button(
             label="Overview video",
-            url="https://drive.google.com/file/d/1AUS4iz22fvuj3xRx38JI3YDX06BWDzU_/view?usp=sharing,
+            url="https://drive.google.com/file/d/1AUS4iz22fvuj3xRx38JI3YDX06BWDzU_/view?usp=sharing",
             type="primary")
 
 
