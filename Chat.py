@@ -154,7 +154,9 @@ def get_google_response():
     )
     try:
         response = chat.invoke(messages)
-        response_markdown = response.content
+        if MODELS[st.session_state['model_type']] == "chat-bison":
+            response_markdown = response.content
+            st.markdown(response_markdown, unsafe_allow_html=True)
     except Exception as e:
         error_type = type(e).__name__
         response = faux_response(
@@ -166,7 +168,7 @@ def get_google_response():
             <b>{error_type}:<b> {str(e)}</p>
         </div>
         """
-    st.markdown(response_markdown, unsafe_allow_html=True)
+        st.markdown(response_markdown, unsafe_allow_html=True)
     return response
 
 
