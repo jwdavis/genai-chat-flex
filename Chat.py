@@ -80,8 +80,6 @@ def show_sidebar():
                 (key for key in MODELS.keys()),
                 on_change=clear_chat
             ):
-                st.session_state["messages"] = [ChatMessage(
-                    role="assistant", content="How can I help you?")]
                 st.session_state['model_type'] = model_type
         with col2:
             st.container(height=12, border=False)

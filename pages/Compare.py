@@ -34,7 +34,7 @@ def show_sidebar():
     with st.sidebar:
         add_vertical_space(1)
         st.link_button(
-            label="Overview video",
+            label="Watch Overview Video",
             url="https://drive.google.com/file/d/1AUS4iz22fvuj3xRx38JI3YDX06BWDzU_/view?usp=sharing",
             type="primary")
 
@@ -69,10 +69,12 @@ async def get_response(model_key: str, prompt: str) -> str:
 
     {prompt}
     """
+    print(f"Getting response from {model_key}")
     if model_key in ['PaLMv2', 'Gemini-Pro', 'Codey']:
         model_name = MODELS[model_key]
         llm = VertexAI(model_name=model_name)
         response = await llm.ainvoke(prompt)
+        print(f"Getting response from {model_key}")
         return response
     elif model_key == 'GPT-3.5':
         model_name = MODELS[model_key]
@@ -81,6 +83,7 @@ async def get_response(model_key: str, prompt: str) -> str:
             model=model_name
         )
         response = await chat.ainvoke(prompt)
+        print(f"Getting response from {model_key}")
         return response
     elif model_key == 'GPT-4 Turbo':
         model_name = MODELS[model_key]
@@ -93,6 +96,7 @@ async def get_response(model_key: str, prompt: str) -> str:
             ChatMessage(role="user", content=prompt)
         ]
         response = await chat.ainvoke(messages)
+        print(f"Getting response from {model_key}")
         return response.content
 
 
@@ -137,12 +141,6 @@ async def main():
     prompt = st.chat_input("Your prompt")
     if prompt:
         with st.spinner("Getting responses"):
-            t1 = asyncio.create_task(get_response('PaLMv2', prompt))
-            t2 = asyncio.create_task(get_response('Gemini-Pro', prompt))
-            responses = [
-                await t1,
-                await t2
-            ]
             tasks = []
             responses = []
             for i, model_key in enumerate(MODELS.keys()):
