@@ -95,7 +95,6 @@ async def get_response(model_key: str, prompt: str) -> str:
             ChatMessage(role="user", content=prompt)
         ]
         response = await chat.ainvoke(messages)
-        print(f'finishing {model_key}')
         return response.content
 
 
@@ -173,30 +172,31 @@ async def main():
     cols = [col for col in st.columns(2)]
     num_models = len(MODELS)
     for i, model in enumerate(MODELS.keys()):
-        container = cols[i % 2].container(height=300, border=True)
+        container = cols[i % 2].container(height=400, border=True)
         container.markdown(f"<h6>{model}</h6>", unsafe_allow_html=True)
         containers.append(container)
 
     if num_models % 2 != 0:
-        container = cols[1].container(height=300, border=True)
+        container = cols[1].container(height=400, border=True)
         container.markdown("<h6>TBD</h6>", unsafe_allow_html=True)
         containers.append(container)
 
     prompt = st.chat_input("Your prompt")
     if prompt:
         with st.spinner("Getting responses"):
+            t1 = asyncio.create_task(get_response('PaLMv2', prompt))
+            t2 = asyncio.create_task(get_response('Gemini-Pro', prompt))
+            responses = [
+                await t1,
+                await t2
+            ]
             tasks = []
             responses = []
             for i, model_key in enumerate(MODELS.keys()):
-                if i % 2 == 0:
-                    tasks.append(asyncio.create_task(
-                        get_response(model_key, prompt)))
-                else:
-                    tasks.append(asyncio.create_task(
-                        get_response2(model_key, prompt)))
-                print(tasks)
-                # tasks.append(asyncio.create_task(get_response(model_key, prompt)))
-                responses.append(await tasks[i])
+                tasks.append(asyncio.create_task(
+                    get_response(model_key, prompt)))
+            for task in tasks:
+                responses.append(await task)
             display_responses(containers, responses)
 
 if __name__ == "__main__":
