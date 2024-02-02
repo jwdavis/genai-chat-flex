@@ -117,12 +117,12 @@ containers = []
 cols = [col for col in st.columns(2)]
 num_models = len(MODELS)
 for i, model in enumerate(MODELS.keys()):
-    container = cols[i % 2].container(border=True)
+    container = cols[i % 2].container(height=300, border=True)
     container.markdown(f"<h6>{model}</h6>", unsafe_allow_html=True)
     containers.append(container)
 
 if num_models % 2 != 0:
-    container = cols[1].container(border=True)
+    container = cols[1].container(height=300, border=True)
     container.markdown("<h6>TBD</h6>", unsafe_allow_html=True)
     containers.append(container)
 
