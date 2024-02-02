@@ -163,7 +163,6 @@ def display_responses(containers: list, responses: list):
         except IndexError:
             container.write("TBD")
 
-
 async def main():
     show_sidebar()
     show_intro()
