@@ -9,7 +9,7 @@ client = secretmanager.SecretManagerServiceClient()
 parent = f"projects/{PROJECT_ID}"
 for secret in client.list_secrets(request={"parent": parent}):
     secret_name = client.parse_secret_path(secret.name)["secret"]
-    version_path = f"{secret.name}/versions/1"
+    version_path = f"{secret.name}/versions/latest"
     response = client.access_secret_version(request={"name": version_path})
     secrets[secret_name] = response.payload.data.decode("UTF-8")
 
