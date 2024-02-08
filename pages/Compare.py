@@ -6,9 +6,6 @@ from config import secrets
 
 import asyncio
 import streamlit as st
-import sys
-sys.path.append("..")
-
 
 st.set_page_config(
     page_title='ROI GenAI Chat',
@@ -27,8 +24,7 @@ MODELS = {
 
 def show_sidebar():
     """
-    Displays the sidebar with a selectbox to choose a model.
-    Updates the session state with the selected model type.
+    Displays the sidebar
     """
     from streamlit_extras.add_vertical_space import add_vertical_space
     with st.sidebar:
@@ -47,8 +43,8 @@ def show_intro():
         "https://www.roitraining.com/wp-content/uploads/2017/02/ROI-logo.png",
         width=300
     )
-    st.title("ROI Training GenAI Chat")
-    st.divider()
+    st.title("GenAI Text Generation Comparison")
+    # st.divider()
 
 
 async def get_response(model_key: str, prompt: str) -> str:
@@ -69,12 +65,10 @@ async def get_response(model_key: str, prompt: str) -> str:
 
     {prompt}
     """
-    print(f"Getting response from {model_key}")
     if model_key in ['PaLMv2', 'Gemini-Pro', 'Codey']:
         model_name = MODELS[model_key]
         llm = VertexAI(model_name=model_name)
         response = await llm.ainvoke(prompt)
-        print(f"Getting response from {model_key}")
         return response
     elif model_key == 'GPT-3.5':
         model_name = MODELS[model_key]
@@ -83,7 +77,6 @@ async def get_response(model_key: str, prompt: str) -> str:
             model=model_name
         )
         response = await chat.ainvoke(prompt)
-        print(f"Getting response from {model_key}")
         return response
     elif model_key == 'GPT-4 Turbo':
         model_name = MODELS[model_key]
@@ -96,58 +89,40 @@ async def get_response(model_key: str, prompt: str) -> str:
             ChatMessage(role="user", content=prompt)
         ]
         response = await chat.ainvoke(messages)
-        print(f"Getting response from {model_key}")
         return response.content
-
-
-def display_responses(containers: list, responses: list):
-    """
-    Display the responses in the given containers.
-
-    Args:
-        containers (list): A list of containers to display the responses in.
-        responses (list): A list of responses to be displayed.
-
-    Returns:
-        None
-    """
-
-    for container in containers:
-        try:
-            container.write(responses.pop(0))
-        except IndexError:
-            container.write("TBD")
-
+    
+async def update_tab(tab, result,empty):
+    empty.empty()
+    tab.markdown(result, unsafe_allow_html=True)
 
 async def main():
     show_sidebar()
     show_intro()
 
-    containers = []
-    cols = [col for col in st.columns(2)]
-    num_models = len(MODELS)
-    for i, model in enumerate(MODELS.keys()):
-        container = cols[i % 2].container(
-            height=300, border=True)
-        container.markdown(f"<h6>{model}</h6>", unsafe_allow_html=True)
-        containers.append(container)
-
-    if num_models % 2 != 0:
-        container = cols[1].container(
-            height=300, border=True)
-        container.markdown("<h6>TBD</h6>", unsafe_allow_html=True)
-        containers.append(container)
-
+    tabs = st.tabs(MODELS.keys())
+    empties = []
     prompt = st.chat_input("Your prompt")
     if prompt:
-        with st.spinner("Getting responses"):
-            tasks = []
-            responses = []
-            for i, model_key in enumerate(MODELS.keys()):
-                tasks.append(asyncio.create_task(
-                    get_response(model_key, prompt)))
-            responses = await asyncio.gather(*tasks)
-            display_responses(containers, responses)
+        tasks = []
+        for i, model_key in enumerate(MODELS.keys()):
+            with tabs[i]:
+                empty = st.empty()
+                with empty:
+                    # st.write(f"Loading...{i}")
+                    st.status(f"Getting response from {model_key}...")
+                empties.append(empty)
+
+            async def update_tab_coroutine(tab, result, empty):
+                await update_tab(tab, result, empty)
+
+            task = asyncio.create_task(get_response(model_key, prompt))
+            task.add_done_callback(
+                lambda t, i=i: asyncio.create_task(
+                    update_tab_coroutine(tabs[i], t.result(), empties[i])
+                )
+            )
+            tasks.append(task)
+        await asyncio.gather(*tasks)
 
 if __name__ == "__main__":
     asyncio.run(main())

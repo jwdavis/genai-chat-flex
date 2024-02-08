@@ -8,8 +8,6 @@ from langchain.callbacks.base import BaseCallbackHandler
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_google_vertexai import (
     ChatVertexAI,
-    HarmBlockThreshold,
-    HarmCategory
 )
 from langchain_openai import ChatOpenAI
 
@@ -101,7 +99,7 @@ def show_intro():
         "https://www.roitraining.com/wp-content/uploads/2017/02/ROI-logo.png",
         width=300
     )
-    st.title("ROI Training GenAI Chat")
+    st.title("GenAI Chat")
     st.divider()
 
 
