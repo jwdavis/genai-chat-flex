@@ -1,16 +1,9 @@
-from langchain.schema import ChatMessage
-from langchain_openai import OpenAI, ChatOpenAI
-from langchain_google_vertexai import VertexAI
+from google.oauth2 import id_token
+from google.auth.transport import requests
+from google.auth import jwt
 from streamlit.web.server.websocket_headers import _get_websocket_headers 
-from urllib.parse import unquote
-from config import secrets, PROJECT_ID, PROJECT_NUMBER
-from jose import jwt
 
-import asyncio, sys
 import streamlit as st
-
-CERTS = None
-AUDIENCE = None
 
 st.set_page_config(
     page_title='ROI GenAI Chat',
@@ -28,61 +21,20 @@ def show_intro():
     )
     st.title("Auth stuff")
 
-
-def certs():
-    """Returns a dictionary of current Google public key certificates for
-    validating Google-signed JWTs. Since these change rarely, the result
-    is cached on first request for faster subsequent responses.
-    """
-    import requests
-
-    global CERTS
-    if CERTS is None:
-        response = requests.get(
-            'https://www.gstatic.com/iap/verify/public_key'
-        )
-        CERTS = response.json()
-    return CERTS
-
-
-def audience():
-    """Returns the audience value (the JWT 'aud' property) for the current
-    running instance. Since this involves a metadata lookup, the result is
-    cached when first requested for faster future responses.
-    """
-    global AUDIENCE
-    if AUDIENCE is None:
-        project_number = PROJECT_NUMBER
-        project_id = PROJECT_ID
-        AUDIENCE = '/projects/{}/apps/{}'.format(
-            project_number, project_id
-        )
-    return AUDIENCE
-
-def validate_assertion(assertion):
-    """Checks that the JWT assertion is valid (properly signed, for the
-    correct audience) and if so, returns strings for the requesting user's
-    email and a persistent user ID. If not valid, returns None for each field.
-    """
+def say_hello(a, b):
     try:
-        info = jwt.decode(
-            assertion,
-            certs(),
-            algorithms=['ES256'],
-            audience=audience()
+        id_info = id_token.verify_oauth2_token(
+            a, 
+            requests.Request(), 
+            audience=b
         )
-        return info['email'], info['sub']
-    except Exception as e:
-        print('Failed to validate assertion: {}'.format(e), file=sys.stderr)
-        return None, None
-
-def say_hello():
-    headers = _get_websocket_headers()
-    st.write(headers)
-    assertion = headers.get('X-Goog-IAP-JWT-Assertion')
-    email, id = validate_assertion(assertion)
-    page = "<h1>Hello {}</h1>".format(email)
-    st.markdown(page, unsafe_allow_html=True)
+        st.write(id_info)
+    except ValueError as e:
+        st.write(e)
 
 show_intro()
-say_hello()
+headers = _get_websocket_headers()
+st.write(headers)
+assertion = headers.get('X-Goog-Iap-Jwt-Assertion')
+say_hello(assertion, "168855055138-arrqpas810j6mqt3j8k4o0khqa8m1ue6.apps.googleusercontent.com")
+say_hello(assertion, "168855055138-arrqpas810j6mqt3j8k4o0khqa8m1ue6.apps.googleusercontent.com")
