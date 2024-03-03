@@ -8,3 +8,5 @@ langchain
 langchain-openai
 langchain-google-genai
 langchain-google-vertexai
+cryptography==41.0.2
+python-jose[cryptography]==3.3.0

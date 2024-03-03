@@ -2,6 +2,7 @@ from google.cloud import secretmanager
 import os
 
 PROJECT_ID = os.environ['GOOGLE_CLOUD_PROJECT']
+PROJECT_NUMBER = os.environ['GOOGLE_CLOUD_PROJECT_NUMBER']
 secrets = {}
 
 # get secret content from secret manager

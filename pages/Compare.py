@@ -22,6 +22,8 @@ MODELS = {
 }
 
 
+print(secrets)
+
 def show_sidebar():
     """
     Displays the sidebar
