@@ -1,14 +1,16 @@
 import streamlit as st
+import auth, history
+import hashlib
 
+from datetime import datetime
 from config import secrets, load_markdown_files
-
+from streamlit_extras.row import row
+from streamlit_extras.stylable_container import stylable_container
 from langchain_core.messages import SystemMessage, HumanMessage, AIMessage
 from langchain.schema import ChatMessage
 from langchain.callbacks.base import BaseCallbackHandler
 from langchain_core.prompts import ChatPromptTemplate
-from langchain_google_vertexai import (
-    ChatVertexAI,
-)
+from langchain_google_vertexai import (ChatVertexAI)
 from langchain_openai import ChatOpenAI
 
 st.set_page_config(
@@ -23,7 +25,6 @@ MODELS = {
     'GPT-3.5': 'gpt-3.5-turbo-1106',
     'Codey': 'codechat-bison@002'
 }
-
 
 class StreamHandler(BaseCallbackHandler):
     """
@@ -49,11 +50,9 @@ class StreamHandler(BaseCallbackHandler):
         self.text += token
         self.container.markdown(self.text)
 
-
 class faux_response():
     def __init__(self, content):
         self.content = content
-
 
 def clear_chat():
     """
@@ -62,6 +61,8 @@ def clear_chat():
     st.session_state["messages"] = [ChatMessage(
         role="assistant", content="How can I help you?")]
 
+def load_chat():
+    print('loading chat')
 
 def show_sidebar():
     """
@@ -73,23 +74,34 @@ def show_sidebar():
         add_vertical_space(1)
         col1, col2 = st.columns([4, 1])
         with col1:
-             if model_type := st.selectbox(
-                "Select model...",
+            if model_type := st.selectbox(
+                "Select model",
                 (key for key in MODELS.keys()),
                 on_change=clear_chat
             ):
                 st.session_state['model_type'] = model_type
+            
+            # chat_metadata = history.get_user_chat_metadata(
+            #     auth.get_email(), model_type)
+            # chat_history = st.selectbox(
+            #     "Chat history",
+            #     chat_metadata,
+            #     on_change=load_chat(),
+            #     placeholder="Select a chat",
+            #     index=None
+            # )
         with col2:
-            st.container(height=12, border=False)
-            if st.button("↻", type="secondary"):
+            st.container(height=14, border=False)
+            if st.button("↻", use_container_width=True):
                 st.session_state["messages"] = [ChatMessage(
                     role="assistant", content="How can I help you?")]
-        st.divider()
-        st.link_button(
-            label="Watch Overview Video",
-            url="https://drive.google.com/file/d/1AUS4iz22fvuj3xRx38JI3YDX06BWDzU_/view?usp=sharing",
-            type="primary")
-
+            st.container(height=13, border=False)
+            # st.button("🗑", use_container_width=True)
+        # st.divider()
+        # st.link_button(
+        #     label="Watch Overview Video",
+        #     url="https://drive.google.com/file/d/1AUS4iz22fvuj3xRx38JI3YDX06BWDzU_/view?usp=sharing",
+        #     type="primary")
 
 def show_intro():
     """
@@ -99,7 +111,36 @@ def show_intro():
         "https://www.roitraining.com/wp-content/uploads/2017/02/ROI-logo.png",
         width=300
     )
-    st.title("GenAI Chat")
+    st.title("Generative AI Playground")
+    email=""
+    try:
+        email = auth.get_email()
+    except Exception as e:
+        pass
+    st.markdown(f"""
+        <style>
+        .dev_container {{
+            border: 2px solid lightgray; /* Light outline */
+            border-radius: 10px; /* Rounded corners */
+            display: flex; /* Use flexbox to create columns */
+            padding: 5px; /* Padding around the content */
+            justify-content: space-around; /* Space out the columns evenly */
+        }}
+        .dev_column {{
+            flex: 1; /* Each column takes up equal space */
+            padding: 10px; /* Padding around the content of each column */
+        }}
+        .dev_label {{
+            font-weight: bold; /* Make the label bold */
+        }}
+        </style>
+        <div class="dev_container">
+        <div class="dev_column">Developer info</div>
+        <div class="dev_column">Timestamp: <span class="dev_label">{datetime.now()}</span></div>
+        <div class="dev_column">User: <span class="dev_label">{email}</span></div>
+        </div>
+        """, unsafe_allow_html=True)
+
     st.divider()
 
 
@@ -169,11 +210,23 @@ def get_google_response():
         st.markdown(response_markdown, unsafe_allow_html=True)
     return response
 
+def get_hash(prompt):
+    """
+    Generates a hash from the input prompt.
+
+    Args:
+        prompt (str): The prompt to hash.
+
+    Returns:
+        str: The hashed value of the input prompt.
+    """
+    return hashlib.sha256(prompt.encode()).hexdigest()
 
 md_dict = load_markdown_files()
 st.markdown(md_dict['styles'], unsafe_allow_html=True)
 show_sidebar()
 show_intro()
+email = auth.get_email()
 
 if "messages" not in st.session_state:
     st.session_state["messages"] = [ChatMessage(
@@ -181,7 +234,6 @@ if "messages" not in st.session_state:
 
 for msg in st.session_state["messages"]:
     st.chat_message(msg.role).markdown(msg.content, unsafe_allow_html=True)
-
 
 if prompt := st.chat_input():
     st.session_state.messages.append(ChatMessage(role="user", content=prompt))
@@ -199,3 +251,14 @@ if prompt := st.chat_input():
             ChatMessage(role="assistant",
                         content=response.content)
         )
+        # st.session_state.db_info = {
+        #     "model": st.session_state['model_type'],
+        #     "prompt": st.session_state.messages[1],
+        #     "hash": get_hash(st.session_state.messages[1].content),
+        #     "messages": st.session_state.messages
+        # }
+        # history.store_chat(email, st.session_state.db_info)
+        # st.rerun()
+
+# st.button("test firestore", on_click=history.test())
+# st.button("delete firestore", on_click=history.delete())
