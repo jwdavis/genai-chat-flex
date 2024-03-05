@@ -17,11 +17,12 @@ def store_chat(email, db_info):
     db = firestore.Client()
     parent_ref = db.collection("users").document(email)
     subcollection_ref = parent_ref.collection("chats").document(db_info["hash"])
-    subcollection_ref.set({
+    res = subcollection_ref.set({
         "messages": convert_to_list(db_info["messages"]),
         "model": db_info["model"],
         "hash": db_info["hash"]
     })
+    print(res)
 
 def get_user_chat_metadata(email, model):
     db = firestore.Client()
@@ -31,7 +32,7 @@ def get_user_chat_metadata(email, model):
     chat_prompts = []
     chat_hashes = []
     for chat in chats:
-        chat_prompts.append(chat.to_dict()["prompt"][:50])
+        chat_prompts.append(chat.to_dict()['messages'][1]['content'][:50])
         chat_hashes.append(chat.to_dict()["hash"])
     return {
         "prompts": chat_prompts, 

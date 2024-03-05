@@ -189,6 +189,7 @@ def get_hash(prompt):
     """
     return hashlib.sha256(prompt.encode()).hexdigest()
 
+print('starting script')
 # initialize state
 if "model_type" not in st.session_state:
     st.session_state["model_type"] = 'Gemini-Pro'
@@ -243,7 +244,7 @@ if prompt := st.chat_input():
             "hash": prompt_hash,
             "messages": st.session_state.messages
         }
-
+        history.store_chat(st.session_state["email"], st.session_state.db_info)
         st.rerun()
 
 # st.button("test firestore", on_click=history.test())
