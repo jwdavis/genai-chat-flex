@@ -18,7 +18,6 @@ def store_chat(email, db_info):
     parent_ref = db.collection("users").document(email)
     subcollection_ref = parent_ref.collection("chats").document(db_info["hash"])
     subcollection_ref.set({
-        "prompt": db_info["prompt"].content,
         "messages": convert_to_list(db_info["messages"]),
         "model": db_info["model"],
         "hash": db_info["hash"]
@@ -29,7 +28,12 @@ def get_user_chat_metadata(email, model):
     parent_ref = db.collection("users").document(email)
     subcollection_ref = parent_ref.collection("chats")
     chats = subcollection_ref.stream()
-    chat_list = []
+    chat_prompts = []
+    chat_hashes = []
     for chat in chats:
-        chat_list.append(chat.to_dict()["prompt"][:50])
-    return chat_list
+        chat_prompts.append(chat.to_dict()["prompt"][:50])
+        chat_hashes.append(chat.to_dict()["hash"])
+    return {
+        "prompts": chat_prompts, 
+        "hashes": chat_hashes
+    }

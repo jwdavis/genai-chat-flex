@@ -3,6 +3,10 @@ from google.auth.transport import requests
 from streamlit.web.server.websocket_headers import _get_websocket_headers 
 from config import secrets
 
+
+def get_headers():
+    return _get_websocket_headers()
+
 def get_email():
     email="demo@demo.com"
     headers = _get_websocket_headers()
@@ -17,5 +21,4 @@ def get_email():
         email = id_info['email']
     except Exception as e:
         pass
-
     return email

@@ -50,10 +50,6 @@ class StreamHandler(BaseCallbackHandler):
         self.text += token
         self.container.markdown(self.text)
 
-class faux_response():
-    def __init__(self, content):
-        self.content = content
-
 def clear_chat():
     """
     Clears the chat messages by resetting the 'messages' session state to contain only the initial assistant message.
@@ -80,28 +76,30 @@ def show_sidebar():
                 on_change=clear_chat
             ):
                 st.session_state['model_type'] = model_type
-            
-            # chat_metadata = history.get_user_chat_metadata(
-            #     auth.get_email(), model_type)
-            # chat_history = st.selectbox(
-            #     "Chat history",
-            #     chat_metadata,
-            #     on_change=load_chat(),
-            #     placeholder="Select a chat",
-            #     index=None
-            # )
         with col2:
             st.container(height=14, border=False)
             if st.button("↻", use_container_width=True):
                 st.session_state["messages"] = [ChatMessage(
                     role="assistant", content="How can I help you?")]
-            st.container(height=13, border=False)
+            # st.container(height=13, border=False)
             # st.button("🗑", use_container_width=True)
+        st.divider()
+        chat_history_select = st.selectbox(
+            "Chat history (in development)",
+            st.session_state['chat_history']['prompts'],
+            on_change=load_chat(),
+            placeholder="Select a chat",
+            index=None
+        )
         # st.divider()
         # st.link_button(
         #     label="Watch Overview Video",
         #     url="https://drive.google.com/file/d/1AUS4iz22fvuj3xRx38JI3YDX06BWDzU_/view?usp=sharing",
         #     type="primary")
+        st.divider()
+        with st.expander("Developer Info", expanded=False):
+            st.caption(st.session_state.email)
+            st.write(st.session_state.headers)
 
 def show_intro():
     """
@@ -112,37 +110,7 @@ def show_intro():
         width=300
     )
     st.title("Generative AI Playground")
-    email=""
-    try:
-        email = auth.get_email()
-    except Exception as e:
-        pass
-    st.markdown(f"""
-        <style>
-        .dev_container {{
-            border: 2px solid lightgray; /* Light outline */
-            border-radius: 10px; /* Rounded corners */
-            display: flex; /* Use flexbox to create columns */
-            padding: 5px; /* Padding around the content */
-            justify-content: space-around; /* Space out the columns evenly */
-        }}
-        .dev_column {{
-            flex: 1; /* Each column takes up equal space */
-            padding: 10px; /* Padding around the content of each column */
-        }}
-        .dev_label {{
-            font-weight: bold; /* Make the label bold */
-        }}
-        </style>
-        <div class="dev_container">
-        <div class="dev_column">Developer info</div>
-        <div class="dev_column">Timestamp: <span class="dev_label">{datetime.now()}</span></div>
-        <div class="dev_column">User: <span class="dev_label">{email}</span></div>
-        </div>
-        """, unsafe_allow_html=True)
-
     st.divider()
-
 
 def get_gpt_response():
     """
@@ -160,7 +128,6 @@ def get_gpt_response():
     )
     response = chat.invoke(st.session_state.messages)
     return response
-
 
 def get_google_response():
     """
@@ -222,19 +189,35 @@ def get_hash(prompt):
     """
     return hashlib.sha256(prompt.encode()).hexdigest()
 
-md_dict = load_markdown_files()
-st.markdown(md_dict['styles'], unsafe_allow_html=True)
-show_sidebar()
-show_intro()
-email = auth.get_email()
+# initialize state
+if "model_type" not in st.session_state:
+    st.session_state["model_type"] = 'Gemini-Pro'
+
+if "email" not in st.session_state:
+    st.session_state["email"] = auth.get_email()
+
+if "chat_history" not in st.session_state:
+    st.session_state["chat_history"] = history.get_user_chat_metadata(
+        st.session_state["email"], st.session_state['model_type'])
 
 if "messages" not in st.session_state:
     st.session_state["messages"] = [ChatMessage(
         role="assistant", content="How can I help you?")]
+    
+if "headers" not in st.session_state:
+    st.session_state["headers"] = auth.get_headers()
+    
+# begin page display
+md_dict = load_markdown_files()
+st.markdown(md_dict['styles'], unsafe_allow_html=True)
+show_sidebar()
+show_intro()
 
+# display chat messages
 for msg in st.session_state["messages"]:
     st.chat_message(msg.role).markdown(msg.content, unsafe_allow_html=True)
 
+# display chat input
 if prompt := st.chat_input():
     st.session_state.messages.append(ChatMessage(role="user", content=prompt))
     st.chat_message("user").write(prompt)
@@ -247,18 +230,21 @@ if prompt := st.chat_input():
             with st.spinner("Getting response"):
                 response = get_gpt_response()
 
+        # add the response to the chat display
         st.session_state.messages.append(
             ChatMessage(role="assistant",
                         content=response.content)
         )
-        # st.session_state.db_info = {
-        #     "model": st.session_state['model_type'],
-        #     "prompt": st.session_state.messages[1],
-        #     "hash": get_hash(st.session_state.messages[1].content),
-        #     "messages": st.session_state.messages
-        # }
-        # history.store_chat(email, st.session_state.db_info)
-        # st.rerun()
+
+        # update the chat history in db and on page
+        prompt_hash = get_hash(st.session_state.messages[1].content)
+        st.session_state.db_info = {
+            "model": st.session_state['model_type'],
+            "hash": prompt_hash,
+            "messages": st.session_state.messages
+        }
+
+        st.rerun()
 
 # st.button("test firestore", on_click=history.test())
 # st.button("delete firestore", on_click=history.delete())
