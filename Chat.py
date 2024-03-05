@@ -65,6 +65,7 @@ def show_sidebar():
     Displays the sidebar with a selectbox to choose a model.
     Updates the session state with the selected model type.
     """
+    print('showing sidebar')
     from streamlit_extras.add_vertical_space import add_vertical_space
     with st.sidebar:
         add_vertical_space(1)
@@ -189,7 +190,6 @@ def get_hash(prompt):
     """
     return hashlib.sha256(prompt.encode()).hexdigest()
 
-print('starting script')
 # initialize state
 if "model_type" not in st.session_state:
     st.session_state["model_type"] = 'Gemini-Pro'
@@ -246,6 +246,7 @@ if prompt := st.chat_input():
         }
         history.store_chat(st.session_state["email"], st.session_state.db_info)
         st.rerun()
+
 
 # st.button("test firestore", on_click=history.test())
 # st.button("delete firestore", on_click=history.delete())
