@@ -50,6 +50,10 @@ class StreamHandler(BaseCallbackHandler):
         self.text += token
         self.container.markdown(self.text)
 
+class faux_response():
+    def __init__(self, content):
+        self.content = content
+
 def clear_chat():
     """
     Clears the chat messages by resetting the 'messages' session state to contain only the initial assistant message.
@@ -239,12 +243,16 @@ if prompt := st.chat_input():
 
         # update the chat history in db and on page
         prompt_hash = get_hash(st.session_state.messages[1].content)
-        st.session_state.db_info = {
+        db_info = {
             "model": st.session_state['model_type'],
             "hash": prompt_hash,
             "messages": st.session_state.messages
         }
-        history.store_chat(st.session_state["email"], st.session_state.db_info)
+        history.store_chat(st.session_state["email"], db_info)
+        if prompt_hash not in st.session_state["chat_history"]["hashes"]:
+            st.session_state["chat_history"]["prompts"].append(
+                st.session_state.messages[1].content[:50])
+                
         st.rerun()
 
 
