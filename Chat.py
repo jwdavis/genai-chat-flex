@@ -21,9 +21,10 @@ st.set_page_config(
 MODELS = {
     'Gemini-Pro': 'gemini-pro',
     'PaLMv2': 'chat-bison',
+    'PaLMv2 32K': 'chat-bison-32k',
+    'Codey': 'codechat-bison@002',
     'GPT-4 Turbo': 'gpt-4-0125-preview',
-    'GPT-3.5': 'gpt-3.5-turbo-1106',
-    'Codey': 'codechat-bison@002'
+    'GPT-3.5': 'gpt-3.5-turbo-0125',
 }
 
 class StreamHandler(BaseCallbackHandler):
@@ -85,23 +86,23 @@ def show_sidebar():
             if st.button("↻", use_container_width=True):
                 st.session_state["messages"] = [ChatMessage(
                     role="assistant", content="How can I help you?")]
-        st.divider()
-        chat_history_select = st.selectbox(
-            "Chat history (in development)",
-            st.session_state['chat_history']['prompts'],
-            on_change=load_chat(),
-            placeholder="Select a chat",
-            index=None
-        )
+        # st.divider()
+        # chat_history_select = st.selectbox(
+        #     "Chat history (in development)",
+        #     st.session_state['chat_history']['prompts'],
+        #     on_change=load_chat(),
+        #     placeholder="Select a chat",
+        #     index=None
+        # )
         # st.divider()
         # st.link_button(
         #     label="Watch Overview Video",
         #     url="https://drive.google.com/file/d/1AUS4iz22fvuj3xRx38JI3YDX06BWDzU_/view?usp=sharing",
         #     type="primary")
-        st.divider()
-        with st.expander("Developer Info", expanded=False):
-            st.caption(st.session_state.email)
-            st.write(st.session_state.headers)
+        # st.divider()
+        # with st.expander("Developer Info", expanded=False):
+        #     st.caption(st.session_state.email)
+        #     st.write(st.session_state.headers)
 
 def show_intro():
     """
@@ -111,7 +112,7 @@ def show_intro():
         "https://www.roitraining.com/wp-content/uploads/2017/02/ROI-logo.png",
         width=300
     )
-    st.title("Generative AI Playground")
+    st.title("Generative AI Playground - Chat")
     st.divider()
 
 def get_gpt_response():
@@ -157,6 +158,7 @@ def get_google_response():
         convert_system_message_to_human=True,
         max_output_tokens=2000,
         temperature=0.2,
+        top_p=1,
         streaming=do_streaming,
         callbacks=[StreamHandler(st.empty())]
     )

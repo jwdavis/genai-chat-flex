@@ -18,7 +18,7 @@ from streamlit_extras.row import row
 st.set_page_config(
     page_title='ROI GenAI Chat',
     page_icon='./static/ROISquareLogo.png',
-    layout="wide"
+    # layout="wide"
 )
 
 MODELS = text_gen_models
@@ -33,40 +33,41 @@ def show_sidebar():
     """
     Displays the sidebar
     """
-    with st.sidebar:
-        with st.form("preferences", clear_on_submit=False, border=True):
+    return
+    # with st.sidebar:
+    #     with st.form("preferences", clear_on_submit=False, border=True):
 
-            r1 = row([1,2])
-            r1.write("Temp.")
-            temp = r1.text_input(
-                "Temperature", key="temp", label_visibility="collapsed")
+    #         r1 = row([1,2])
+    #         r1.write("Temp.")
+    #         temp = r1.text_input(
+    #             "Temperature", key="temp", label_visibility="collapsed")
             
-            r2 = row([1,2])
-            r2.write("Max. Tokens")
-            max_tokens = r2.text_input(
-                "Max. Tokens", key="tokens", label_visibility="collapsed")
+    #         r2 = row([1,2])
+    #         r2.write("Max. Tokens")
+    #         max_tokens = r2.text_input(
+    #             "Max. Tokens", key="tokens", label_visibility="collapsed")
             
-            r3 = row([1,2])
-            r3.write("Top_P")
-            top_p = r3.text_input(
-                "Top_P", key="top_p", label_visibility="collapsed")
+    #         r3 = row([1,2])
+    #         r3.write("Top_P")
+    #         top_p = r3.text_input(
+    #             "Top_P", key="top_p", label_visibility="collapsed")
             
-            r4 = row([1, 2])
-            r4.write("")
+    #         r4 = row([1, 2])
+    #         r4.write("")
             
-            submitted = r4.form_submit_button(
-                "Set",
-                type="primary",
-                use_container_width=True,
-                on_click=update_prefs
-            )
+    #         submitted = r4.form_submit_button(
+    #             "Set",
+    #             type="primary",
+    #             use_container_width=True,
+    #             on_click=update_prefs
+    #         )
             
-        st.divider()
-        add_vertical_space(1)
-        st.link_button(
-            label="Watch Overview Video",
-            url="https://drive.google.com/file/d/1AUS4iz22fvuj3xRx38JI3YDX06BWDzU_/view?usp=sharing",
-            type="primary")
+        # st.divider()
+        # add_vertical_space(1)
+        # st.link_button(
+        #     label="Watch Overview Video",
+        #     url="https://drive.google.com/file/d/1AUS4iz22fvuj3xRx38JI3YDX06BWDzU_/view?usp=sharing",
+        #     type="primary")
 
 def update_prefs ():
     st.write(st.session_state)
@@ -79,7 +80,7 @@ def show_intro():
         "https://www.roitraining.com/wp-content/uploads/2017/02/ROI-logo.png",
         width=300
     )
-    st.title("GenAI Text Generation Comparison")
+    st.title("Generative AI Playground - Compare")
 
 
 async def get_response(model_key: str, prompt: str) -> str:
@@ -90,9 +91,13 @@ async def get_response(model_key: str, prompt: str) -> str:
 
     {prompt}
     """
-    if model_key in ['PaLM', 'Gemini 1.0 Pro', 'Codey']:
+    if model_key in ['PaLM', 'PaLM 32K', 'Palm Unicorn', 'Gemini 1.0 Pro', 'Codey']:
         model_name = MODELS[model_key]
-        llm = VertexAI(model_name=model_name)
+        llm = VertexAI(
+            model_name=model_name,
+            max_output_tokens=1024,
+            top_p=1
+        )
         response = llm.generate([prompt])
         return response
     elif model_key == 'GPT-3.5':
@@ -103,7 +108,7 @@ async def get_response(model_key: str, prompt: str) -> str:
         )
         response = await chat.ainvoke(prompt)
         return response
-    elif model_key == 'GPT-4 Turbo':
+    elif model_key in ['GPT-3.5 Turbo', 'GPT-4 Turbo']:
         model_name = MODELS[model_key]
         chat = ChatOpenAI(
             openai_api_key=secrets['openai_api_key'],
@@ -128,7 +133,7 @@ async def update_tab(tab, prompt, result, empty):
             del info["text"]
             del info["type"]
             st.write("Additional info returned by the API")
-            st.write(info)
+            st.json(info, expanded=False)
     else:
         tab.chat_message("ai").markdown(result, unsafe_allow_html=True)
 
@@ -153,6 +158,7 @@ async def main():
                 empties.append(empty)
 
             async def update_tab_coroutine(tab, prompt, result, empty):
+                print('here')
                 await update_tab(tab, prompt, result, empty)
 
             if not "soon" in model_key:

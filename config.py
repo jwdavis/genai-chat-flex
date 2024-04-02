@@ -25,15 +25,15 @@ for f in md_files:
         md_dict[key] = file.read()
 
 text_gen_models = {
+    'Gemini 1.0 Pro': 'gemini-1.0-pro',
     'PaLM': 'text-bison',
     'PaLM 32K': 'text-bison-32k',
-    'Palm Unicorn': 'text-bison-unicorn',
-    'Gemini 1.0 Pro': 'gemini-1.0-pro',
+    'Palm Unicorn': 'text-unicorn',
+    'Codey': 'code-bison',
     'GPT-3.5 Turbo': 'gpt-3.5-turbo',
     'GPT-4 Turbo': 'gpt-4-turbo-preview',
-    'Codey': 'code-bison',
-    'Gemini 1.0 Pro Vision (soon)': 'gemini-1.0-pro-vision',
-    'GPT-4 Turbo Vision (soon)': 'gpt-4-vision-preview',
+    # 'Gemini 1.0 Pro Vision (soon)': 'gemini-1.0-pro-vision',
+    # 'GPT-4 Turbo Vision (soon)': 'gpt-4-vision-preview',
 }
 
 image_gen_models = {
