@@ -84,6 +84,7 @@ def show_intro():
 
 
 async def get_response(model_key: str, prompt: str) -> str:
+    print(f'getting {model_key}')
     prompt = f"""
     Follow the user's instructions carefully, answer any questions posed,
     and where appropriate provide step by step explanation of your reasoning. 
@@ -91,12 +92,13 @@ async def get_response(model_key: str, prompt: str) -> str:
 
     {prompt}
     """
-    if model_key in ['PaLM', 'PaLM 32K', 'Palm Unicorn', 'Gemini 1.0 Pro', 'Codey']:
+    if model_key in ['PaLM', 'PaLM 32K', 'Palm Unicorn', 'Gemini 1.0 Pro', 'Codey', 'Codey 32K']:
         model_name = MODELS[model_key]
         llm = VertexAI(
             model_name=model_name,
             max_output_tokens=1024,
-            top_p=1
+            top_p=1,
+            request_parallelism=10
         )
         response = llm.generate([prompt])
         return response
@@ -157,19 +159,19 @@ async def main():
                         st.write(f"{model_key} is coming soon")
                 empties.append(empty)
 
-            async def update_tab_coroutine(tab, prompt, result, empty):
-                print('here')
+            async def update_tab_coroutine(j, tab, prompt, result, empty):
                 await update_tab(tab, prompt, result, empty)
 
             if not "soon" in model_key:
                 task = asyncio.create_task(get_response(model_key, prompt))
                 task.add_done_callback(
-                    lambda t, i=i: asyncio.create_task(
+                    lambda t, j=i: asyncio.create_task(
                         update_tab_coroutine(
-                            tabs[i], 
+                            j,
+                            tabs[j], 
                             prompt, 
                             t.result(), 
-                            empties[i]
+                            empties[j]
                         )
                     )
                 )
