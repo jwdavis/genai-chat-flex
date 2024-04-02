@@ -1,7 +1,6 @@
 <style>
-    [data-testid="stHorizontalBlock"] {
-        display: flex !important;
-        align-items: center;
+    .stMarkdown li {
+        margin-bottom: 10px !important;
     }
     .info_callout {
         background-color: aliceblue;

@@ -3,7 +3,7 @@ import auth, history
 import hashlib
 
 from datetime import datetime
-from config import secrets, load_markdown_files
+from config import secrets
 from streamlit_extras.row import row
 from streamlit_extras.stylable_container import stylable_container
 from langchain_core.messages import SystemMessage, HumanMessage, AIMessage
@@ -69,7 +69,6 @@ def show_sidebar():
     Displays the sidebar with a selectbox to choose a model.
     Updates the session state with the selected model type.
     """
-    print('showing sidebar')
     from streamlit_extras.add_vertical_space import add_vertical_space
     with st.sidebar:
         add_vertical_space(1)
@@ -86,8 +85,6 @@ def show_sidebar():
             if st.button("↻", use_container_width=True):
                 st.session_state["messages"] = [ChatMessage(
                     role="assistant", content="How can I help you?")]
-            # st.container(height=13, border=False)
-            # st.button("🗑", use_container_width=True)
         st.divider()
         chat_history_select = st.selectbox(
             "Chat history (in development)",
@@ -213,8 +210,6 @@ if "headers" not in st.session_state:
     st.session_state["headers"] = auth.get_headers()
     
 # begin page display
-md_dict = load_markdown_files()
-st.markdown(md_dict['styles'], unsafe_allow_html=True)
 show_sidebar()
 show_intro()
 
