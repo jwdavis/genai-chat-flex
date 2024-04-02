@@ -21,10 +21,11 @@ st.set_page_config(
 MODELS = {
     'Gemini-Pro': 'gemini-pro',
     'PaLMv2': 'chat-bison',
-    'PaLMv2 32K': 'chat-bison-32k',
+    'PaLMv2 32K': 'chat-bison-32k@002',
     'Codey': 'codechat-bison@002',
+    'Codey 32K': 'codechat-bison-32k@002',
     'GPT-4 Turbo': 'gpt-4-0125-preview',
-    'GPT-3.5': 'gpt-3.5-turbo-0125',
+    'GPT-3.5 Turbo': 'gpt-3.5-turbo-0125',
 }
 
 class StreamHandler(BaseCallbackHandler):
@@ -151,8 +152,8 @@ def get_google_response():
         for i, msg in enumerate(st.session_state.messages)
     ]
     do_streaming = True
-    if MODELS[st.session_state['model_type']] == "chat-bison":
-        do_streaming = False
+        # if MODELS[st.session_state['model_type']] == "chat-bison":
+        #     do_streaming = False
     chat = ChatVertexAI(
         model_name=MODELS[st.session_state['model_type']],
         convert_system_message_to_human=True,
@@ -225,7 +226,7 @@ if prompt := st.chat_input():
     st.chat_message("user").write(prompt)
 
     with st.chat_message("assistant"):
-        if st.session_state['model_type'] in ['PaLMv2', 'Gemini-Pro', 'Codey']:
+        if st.session_state['model_type'] in ['PaLMv2', 'PaLMv2 32K','Gemini-Pro', 'Codey', 'Codey 32K']:
             with st.spinner("Getting response"):
                 response = get_google_response()
         else:

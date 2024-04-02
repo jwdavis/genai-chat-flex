@@ -30,6 +30,7 @@ text_gen_models = {
     'PaLM 32K': 'text-bison-32k',
     'Palm Unicorn': 'text-unicorn',
     'Codey': 'code-bison',
+    'Codey 32K': 'code-bison-32k@002',
     'GPT-3.5 Turbo': 'gpt-3.5-turbo',
     'GPT-4 Turbo': 'gpt-4-turbo-preview',
     # 'Gemini 1.0 Pro Vision (soon)': 'gemini-1.0-pro-vision',
