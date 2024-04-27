@@ -1,13 +1,13 @@
 from google.cloud import secretmanager
 import os
 
-PROJECT_ID = os.environ['GOOGLE_CLOUD_PROJECT']
-PROJECT_NUMBER = os.environ['GOOGLE_CLOUD_PROJECT_NUMBER']
+project_id = os.environ['GOOGLE_CLOUD_PROJECT']
+region = os.environ['GOOGLE_CLOUD_REGION']
 
 # collect secrets from Secret Manager
 secrets = {}
 client = secretmanager.SecretManagerServiceClient()
-parent = f"projects/{PROJECT_ID}"
+parent = f"projects/{project_id}"
 for secret in client.list_secrets(request={"parent": parent}):
     secret_name = client.parse_secret_path(secret.name)["secret"]
     version_path = f"{secret.name}/versions/latest"
@@ -24,85 +24,55 @@ for f in md_files:
     with open(os.path.join(dir_path, f), 'r') as file:
         md_dict[key] = file.read()
 
-text_gen_models = {
-    'Gemini 1.0 Pro': 'gemini-1.0-pro',
-    'PaLM': 'text-bison',
-    'PaLM 32K': 'text-bison-32k',
-    'Palm Unicorn': 'text-unicorn',
-    'Codey': 'code-bison',
+chat_models = {
+    'Gemini-Pro 1.5': 'gemini-1.5-pro-preview-0409',
+    'GPT-4 Turbo': 'gpt-4-0125-preview',
+    'Claude 3 Sonnet': "claude-3-sonnet@20240229",
+    'Gemini-Pro 1.0': 'gemini-1.0-pro-002',
+    'PaLMv2': 'chat-bison',
+    'PaLMv2 32K': 'chat-bison-32k@002',
+    'Codey': 'codechat-bison@002',
+    'Codey 32K': 'codechat-bison-32k@002',
+    'GPT-3.5 Turbo': 'gpt-3.5-turbo-0125',
+    'Claude 3 Haiku': 'claude-3-haiku@20240307',
+}
+
+text_models = {
+    'Gemini-Pro 1.5': 'gemini-1.5-pro-preview-0409',
+    'GPT-4 Turbo': 'gpt-4-0125-preview',
+    'Claude 3 Sonnet': "claude-3-sonnet@20240229",
+    'Gemini-Pro 1.0': 'gemini-1.0-pro-002',
+    'PaLMv2': 'text-bison',
+    'PaLMv2 32K': 'text-bison-32k@002',
+    'Codey': 'code-bison@002',
     'Codey 32K': 'code-bison-32k@002',
-    'GPT-3.5 Turbo': 'gpt-3.5-turbo',
-    'GPT-4 Turbo': 'gpt-4-turbo-preview',
-    # 'Gemini 1.0 Pro Vision (soon)': 'gemini-1.0-pro-vision',
-    # 'GPT-4 Turbo Vision (soon)': 'gpt-4-vision-preview',
+    'GPT-3.5 Turbo': 'gpt-3.5-turbo-0125',
+    'Claude 3 Haiku': 'claude-3-haiku@20240307',
 }
 
-image_gen_models = {
-    "Imagen 2": "imagegeneration@005",
-    "DALL-E": "dalle-e-3",
-}
+gemini_models = [
+    'Gemini-Pro 1.0',
+    'Gemini-Pro 1.5'
+]
 
-default_model_args = {
-    'compare': {
-        "temperature": 0.2,
-        "max_tokens": 2048,
-        "top_p": 1,
-        "candidate_count": 1,
-        "logprobs": False,
-    },
-    'PaLM': {
-        "temperature": 0.2,
-        "max_tokens": 2048,
-        "candidate_count": 1,
-        "top_p": 1,
-    },
-    'PaLM 32K': {
-        "temperature": 0.2,
-        "max_tokens": 2048,
-        "candidate_count": 1,
-        "top_p": 1,
-    },
-    'PaLM Unicorn': {
-        "temperature": 0.2,
-        "max_tokens": 1024,
-        "candidate_count": 1,
-        "top_k": 40,
-    },
-    'Gemini 1.0 Pro': {
-        "temperature": 0.2,
-        "max_tokens": 2048,
-        "top_p": 1,
-    },
-    'GPT-3.5 Turbo': {
-        "temperature": 0.2,
-        "max_tokens": 2048,
-        "logprobs": False,
-    },
-    'GPT-4 Turbo': {
-        "temperature": 0.2,
-        "max_tokens": 2048,
-        "logprobs": False,
-    },
-    'Codey': {
-        "temperature": 0.2,
-        "max_tokens": 2048,
-        "top_p": 1,
-        "candidate_count": 1,
-    },
-    'Gemini 1.0 Pro Vision (soon)': {
-        "temperature": 0.2,
-        "max_tokens": 2048,
-    },
-    'GPT-4 Turbo Vision (soon)': {
-        "temperature": 0.2,
-        "max_tokens": 2048,
-    },
-    'Imagen 2': {
-        "temperature": 0.2,
-        "max_tokens": 2000,
-    },
-    'DALL-E': {
-        "temperature": 0.2,
-        "max_tokens": 2000,
-    },
-}
+non_gemini_google_models = [
+    'PaLMv2',
+    'PaLMv2 32K',
+    'Codey',
+    'Codey 32K'
+]
+
+openai_models = [
+    'GPT-4 Turbo',
+    'GPT-3.5 Turbo'
+]
+
+claude_models = [
+    'Claude 3 Sonnet',
+    'Claude 3 Haiku'
+]
+
+codey_models = [
+    'Codey',
+    'Codey 32K'
+]

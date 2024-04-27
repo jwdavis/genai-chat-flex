@@ -22,7 +22,6 @@ def store_chat(email, db_info):
         "model": db_info["model"],
         "hash": db_info["hash"]
     })
-    print(res)
 
 def get_user_chat_metadata(email, model):
     db = firestore.Client()
