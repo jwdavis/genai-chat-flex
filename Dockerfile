@@ -6,4 +6,4 @@ ENV PYTHONPATH "${PYTHONPATH}:/app"
 ENV PATH=“${PATH}:/root/.local/bin”
 
 EXPOSE 8080
-CMD ["streamlit", "run",  "Chat.py"]
+CMD ["streamlit", "run",  "Chatbot.py"]
