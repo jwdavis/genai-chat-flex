@@ -15,7 +15,7 @@ from config import (
 )
 
 st.set_page_config(
-    page_title='ROI GenAI Chat',
+    page_title='ROI GenAI Playground',
     page_icon='./static/ROISquareLogo.png',
     layout="wide"
 )
@@ -67,58 +67,6 @@ def show_intro():
     )
     st.title("Generative AI Playground - Compare LLMs")
     st.divider()
-
-def get_response(prompt, response_container):
-    messages = []
-    prompt_message = {
-        "role": "user",
-        "content": prompt
-    }
-    system_message = {
-        "role": "system",
-        "content": f"""You are the ROI Generative AI Chatbot. You provide responses
-        that are clear, professional, detailed, and accurate. When asked
-        questions, you provide the answer first and then provide additional
-        information or context. When specifically prompted to do step-by-step
-        reasoning, you do so (as opposed to keeping explanation until the end).
-        Your responses should be kept to fewer than 2000 tokens."""
-    }
-    welcome_message = {
-        "role": "assistant",
-        "content": "Hi! I'm the ROI Chatbot. How can I help you?"
-    }
-    messages = [system_message, prompt_message]
-
-    stream = openai.chat.completions.create(
-        model=text_models[st.session_state['model_name']], #"gpt-4-0125-preview",
-        messages=messages,
-        temperature=0.5,
-        max_tokens=2048,
-        top_p=1,
-        n=1,
-        stream=True
-    )
-
-    response = ""
-    try:
-        for chunk in stream:
-            if chunk.choices[0].delta.content is not None:
-                response += chunk.choices[0].delta.content
-                response_container.markdown(response, unsafe_allow_html=True)
-        response_message = {
-            "role": "assistant",
-            "content": response
-        }
-        messages.append(response_message)
-        st.session_state['messages'] = messages[2:]
-    except Exception as e:
-        st.markdown(f"""
-            <div class="warn_callout">
-                An error occured
-            </div>
-        """, unsafe_allow_html=True)
-        # st.write(e)
-    return
 
 show_intro()
 

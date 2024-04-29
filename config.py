@@ -76,3 +76,16 @@ codey_models = [
     'Codey',
     'Codey 32K'
 ]
+
+image_models = {
+    "Imagen 2": "imagen@006",
+    "Dall-E 3": "dall-e-3"
+}
+
+google_image_models = [
+    "Imagen 2"
+]
+
+openai_image_models = [
+    "Dall-E 3"
+]

@@ -13,7 +13,7 @@ from config import (
 )
 
 st.set_page_config(
-    page_title='ROI GenAI Chat',
+    page_title='ROI GenAI Playground',
     page_icon='./static/ROISquareLogo.png',
 )
 
