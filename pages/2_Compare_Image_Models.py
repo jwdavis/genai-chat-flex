@@ -1,7 +1,12 @@
 import streamlit as st
 import time
 import imagen, dall_e
-from config import image_models, google_image_models, openai_image_models
+from config import (
+    image_models, 
+    google_image_models, 
+    openai_image_models,
+    md_dict
+)
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from streamlit.runtime.scriptrunner import add_script_run_ctx
 
@@ -10,6 +15,8 @@ st.set_page_config(
     page_icon='./static/ROISquareLogo.png',
     layout="wide"
 )
+
+st.markdown(md_dict['styles'], unsafe_allow_html=True)
 
 google_header_style = """
     background-color: #4285f4;
@@ -33,6 +40,17 @@ openai_header_style = """
     margin-bottom: 10px;
 """
 
+results_style = """
+    background-color: lightgray;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    border-radius: 5px;
+    margin-bottom: 10px;
+"""
+
 
 def show_intro():
     """
@@ -46,7 +64,6 @@ def show_intro():
     st.divider()
 
 show_intro()
-
 cols = [col for col in st.columns(3)]
 containers = []
 empties = []
@@ -88,7 +105,16 @@ if prompt:
                     parent = containers[i]
                 )
                 futures.append(future)
-            for t in executor._threads:
-                add_script_run_ctx(t)
-        # for future in as_completed(futures):
-        #     st.write(future.result())
+        for t in executor._threads:
+            add_script_run_ctx(t)
+    prompt_reminder = f"""
+        <div>
+            <span class="bold">
+                Results for prompt:
+            </span> {prompt}
+        </div>
+    
+    """
+    st.markdown(prompt_reminder, unsafe_allow_html=True)
+    # for future in as_completed(futures):
+    #     st.write(future.result())

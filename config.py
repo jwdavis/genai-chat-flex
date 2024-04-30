@@ -78,7 +78,7 @@ codey_models = [
 ]
 
 image_models = {
-    "Imagen 2": "imagen@006",
+    "Imagen 2": "imagegeneration@006",
     "Dall-E 3": "dall-e-3"
 }
 

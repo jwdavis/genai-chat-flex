@@ -1,4 +1,10 @@
 <style>
+    .gray_callout {
+        padding: 10px;
+        margin-top: 10px;
+        margin-bottom: 20px;
+        margin-top: 20px;
+    }
     .info_callout {
         background-color: aliceblue;
         padding: 10px;
