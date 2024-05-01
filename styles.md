@@ -1,4 +1,10 @@
 <style>
+    .gray_callout {
+        padding: 10px;
+        margin-top: 10px;
+        margin-bottom: 20px;
+        margin-top: 20px;
+    }
     .info_callout {
         background-color: aliceblue;
         padding: 10px;
@@ -18,11 +24,7 @@
         /* font-weight: bold; */
         color: #0068C9;
     }
-    .caption {
-        color: #808080;
-        font-size: .9em;
-    }
-    .in_list {
-        margin-bottom: 30px;
+    .bold {
+        font-weight: bold;
     }
 </style>
