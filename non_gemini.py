@@ -4,7 +4,8 @@ import vertexai
 from vertexai.language_models import (
     ChatModel, 
     TextGenerationModel,
-    CodeGenerationModel
+    CodeGenerationModel,
+    CodeChatModel
 )
 from config import (
     chat_models,
@@ -51,9 +52,12 @@ def get_response(prompt, response_container):
     if "non_gemini_chat_client" in st.session_state:
         chat = st.session_state["non_gemini_chat_client"]
     else:
-        model = ChatModel.from_pretrained(
-            chat_models[st.session_state['model_name']]
-        )
+        model_name = chat_models[st.session_state['model_name']]
+        if is_codey(model_name, is_chat=True):
+            del generation_config["top_p"]
+            model = CodeChatModel.from_pretrained(model_name)
+        else:
+            model = ChatModel.from_pretrained(model_name)
         chat = model.start_chat(
             context = system_message
         )
@@ -82,10 +86,17 @@ def get_response(prompt, response_container):
     st.session_state["messages"] = get_chat_messages(chat)
     return
 
-def is_codey(model_name):
-    for key, value in text_models.items():
+# need to handle chat too
+def is_codey(model_name, is_chat=False):
+    if is_chat:
+        models = chat_models
+    else:
+        models = text_models
+
+    for key, value in models.items():
         if model_name == value and key in codey_models:
             return True
+        
     return False
 
 def get_text_response(prompt, response_container, model_name, parent=None):
