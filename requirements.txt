@@ -1,7 +1,7 @@
 streamlit
 streamlit-extras
 openai
-google-cloud-aiplatform==1.57.0
+google-cloud-aiplatform==1.58.0
 google-cloud-secret-manager
 google-cloud-firestore
 anthropic[vertex]
