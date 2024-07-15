@@ -1,1 +1,1 @@
-# genai-chat-flex
+# ROI Training Generative AI Playground
