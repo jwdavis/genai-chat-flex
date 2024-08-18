@@ -27,12 +27,14 @@ for f in md_files:
 
 chat_models = {
     'Gemini 1.5 Flash': 'gemini-1.5-flash',
-    'GPT-4 Turbo': 'gpt-4-0125-preview',
+    'GPT-4o': 'gpt-4o',
     'Claude 3 Opus': "claude-3-opus@20240229",
     'Gemini 1.5 Pro': 'gemini-1.5-pro-preview-0409',
     'Gemini 1.0 Pro': 'gemini-1.0-pro-002',
     'PaLMv2': 'chat-bison',
     'Codey': 'codechat-bison@002',
+    'GPT-4o mini': 'gpt-4o-mini',
+    'GPT-4 Turbo': 'gpt-4-0125-preview',
     'GPT-3.5 Turbo': 'gpt-3.5-turbo-0125',
     'Claude 3.5 Sonnet': "claude-3-sonnet@20240229",
     'Claude 3 Haiku': 'claude-3-haiku@20240307',
@@ -44,6 +46,8 @@ text_models = {
     'Gemini 1.0 Pro': 'gemini-1.0-pro-002',
     'PaLMv2': 'text-bison',
     'Codey': 'code-bison@002',
+    'GPT-4o': 'gpt-4o',
+    'GPT-4o mini': 'gpt-4o-mini',
     'GPT-4 Turbo': 'gpt-4-0125-preview',
     'GPT-3.5 Turbo': 'gpt-3.5-turbo-0125',
     'Claude 3 Opus': "claude-3-opus@20240229",
@@ -64,7 +68,9 @@ non_gemini_google_models = [
 
 openai_models = [
     'GPT-4 Turbo',
-    'GPT-3.5 Turbo'
+    'GPT-3.5 Turbo',
+    'GPT-4o',
+    'GPT-4o mini'
 ]
 
 claude_models = [
