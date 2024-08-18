@@ -83,8 +83,6 @@ def gen_prompt_display(prompt):
             {prompt}
         </div>
     """
-
-    print(prompt_display_content)
     return prompt_display_content
 
 def show_intro():
