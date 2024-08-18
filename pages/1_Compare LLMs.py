@@ -56,6 +56,36 @@ st.markdown(md_dict['styles'], unsafe_allow_html=True)
 
 openai.api_key = secrets['openai_api_key']
 
+def gen_prompt_display(prompt):
+    prompt_display_outline = """
+        border: 1px solid rgba(49, 51, 63, 0.2);
+        border-radius: 5px;
+        padding: 10px 15px;
+        display: block;
+        margin-bottom: 10px;
+    """
+
+    prompt_display_title = """
+        background-color: rgba(49, 51, 63, 0.2);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        border-radius: 5px;
+        margin-bottom: 10px;
+    """
+
+    prompt_display_content =f"""
+        <div style='{prompt_display_outline}'>
+            <div style='{prompt_display_title}'>
+                Prompt
+            </div>
+            {prompt}
+        </div>
+    """
+
+    print(prompt_display_content)
+    return prompt_display_content
 
 def show_intro():
     """
@@ -70,17 +100,22 @@ def show_intro():
 
 show_intro()
 
+prompt_display_container = st.container()
+prompt_display_empty = prompt_display_container.empty()
+
 cols = [col for col in st.columns(3)]
 containers = []
 empties = []
 for i, model in enumerate(text_models):
-    container = cols[i % 3].container(border=True)
     header_style = ""
     if model in gemini_models or model in non_gemini_google_models:
+        container = cols[0].container(border=True)
         header_style = google_header_style
     if model in openai_models:
+        container = cols[1].container(border=True)
         header_style = openai_header_style
     if model in claude_models:
+        container = cols[2].container(border=True)
         header_style = claude_header_style
     container.markdown(
         f"<div style='{header_style}'>{model}</div>",
@@ -91,6 +126,7 @@ for i, model in enumerate(text_models):
 
 prompt = st.chat_input("Your prompt")
 if prompt:
+    prompt_display_empty.markdown(gen_prompt_display(prompt), unsafe_allow_html=True)
     with ThreadPoolExecutor(max_workers=8) as executor:
         futures = []
         for i, model in enumerate(text_models):

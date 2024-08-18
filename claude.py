@@ -2,6 +2,8 @@ import streamlit as st
 from config import secrets, chat_models, project_id, region
 from anthropic import AnthropicVertex
 
+# turns out that Claude models aren't all available in central
+region = "us-east5"
 client = AnthropicVertex(region=region, project_id=project_id)
 
 class ClaudeError(Exception):

@@ -13,6 +13,7 @@ for secret in client.list_secrets(request={"parent": parent}):
     version_path = f"{secret.name}/versions/latest"
     response = client.access_secret_version(request={"name": version_path})
     secrets[secret_name] = response.payload.data.decode("UTF-8")
+print(secrets)
 
 # collect markdown files
 dir_path = "./"
@@ -25,41 +26,40 @@ for f in md_files:
         md_dict[key] = file.read()
 
 chat_models = {
-    'Gemini-Pro 1.5': 'gemini-1.5-pro-preview-0409',
+    'Gemini 1.5 Flash': 'gemini-1.5-flash',
     'GPT-4 Turbo': 'gpt-4-0125-preview',
-    'Claude 3 Sonnet': "claude-3-sonnet@20240229",
-    'Gemini-Pro 1.0': 'gemini-1.0-pro-002',
+    'Claude 3 Opus': "claude-3-opus@20240229",
+    'Gemini 1.5 Pro': 'gemini-1.5-pro-preview-0409',
+    'Gemini 1.0 Pro': 'gemini-1.0-pro-002',
     'PaLMv2': 'chat-bison',
-    'PaLMv2 32K': 'chat-bison-32k@002',
     'Codey': 'codechat-bison@002',
-    'Codey 32K': 'codechat-bison-32k@002',
     'GPT-3.5 Turbo': 'gpt-3.5-turbo-0125',
+    'Claude 3.5 Sonnet': "claude-3-sonnet@20240229",
     'Claude 3 Haiku': 'claude-3-haiku@20240307',
 }
 
 text_models = {
-    'Gemini-Pro 1.5': 'gemini-1.5-pro-preview-0409',
-    'GPT-4 Turbo': 'gpt-4-0125-preview',
-    'Claude 3 Sonnet': "claude-3-sonnet@20240229",
-    'Gemini-Pro 1.0': 'gemini-1.0-pro-002',
+    'Gemini 1.5 Flash': 'gemini-1.5-flash',
+    'Gemini 1.5 Pro': 'gemini-1.5-pro-preview-0409',
+    'Gemini 1.0 Pro': 'gemini-1.0-pro-002',
     'PaLMv2': 'text-bison',
-    'PaLMv2 32K': 'text-bison-32k@002',
     'Codey': 'code-bison@002',
-    'Codey 32K': 'code-bison-32k@002',
+    'GPT-4 Turbo': 'gpt-4-0125-preview',
     'GPT-3.5 Turbo': 'gpt-3.5-turbo-0125',
+    'Claude 3 Opus': "claude-3-opus@20240229",
+    'Claude 3.5 Sonnet': "claude-3-sonnet@20240229",
     'Claude 3 Haiku': 'claude-3-haiku@20240307',
 }
 
 gemini_models = [
-    'Gemini-Pro 1.0',
-    'Gemini-Pro 1.5'
+    'Gemini 1.5 Pro',
+    'Gemini 1.5 Flash',
+    'Gemini 1.0 Pro'
 ]
 
 non_gemini_google_models = [
     'PaLMv2',
-    'PaLMv2 32K',
     'Codey',
-    'Codey 32K'
 ]
 
 openai_models = [
@@ -68,13 +68,13 @@ openai_models = [
 ]
 
 claude_models = [
-    'Claude 3 Sonnet',
+    'Claude 3 Opus',
+    'Claude 3.5 Sonnet',
     'Claude 3 Haiku'
 ]
 
 codey_models = [
-    'Codey',
-    'Codey 32K'
+    'Codey'
 ]
 
 image_models = {
