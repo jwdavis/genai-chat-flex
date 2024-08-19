@@ -1,10 +1,11 @@
 import streamlit as st
 import time
-import imagen, dall_e
+import imagen, dall_e, stability
 from config import (
     image_models, 
     google_image_models, 
     openai_image_models,
+    stability_image_models,
     md_dict
 )
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -31,6 +32,17 @@ google_header_style = """
 
 openai_header_style = """
     background-color: rgb(16, 163, 127);
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    border-radius: 5px;
+    margin-bottom: 10px;
+"""
+
+stability_header_style = """
+    background-color: #F4B400;
     color: white;
     display: flex;
     justify-content: center;
@@ -74,6 +86,8 @@ for i, model in enumerate(image_models):
         header_style = google_header_style
     if model in openai_image_models:
         header_style = openai_header_style
+    if model in stability_image_models:
+        header_style = stability_header_style
     container.markdown(
         f"<div style='{header_style}'>{model}</div>",
         unsafe_allow_html=True)
@@ -103,6 +117,15 @@ if prompt:
                     empties[i],
                     model_name=image_models[model],
                     parent = containers[i]
+                )
+                futures.append(future)
+            if model in stability_image_models:
+                future = executor.submit(
+                    stability.generate_image,
+                    prompt,
+                    empties[i],
+                    model_name=image_models[model],
+                    parent=containers[i]
                 )
                 futures.append(future)
         for t in executor._threads:

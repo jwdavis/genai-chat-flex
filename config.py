@@ -13,7 +13,6 @@ for secret in client.list_secrets(request={"parent": parent}):
     version_path = f"{secret.name}/versions/latest"
     response = client.access_secret_version(request={"name": version_path})
     secrets[secret_name] = response.payload.data.decode("UTF-8")
-print(secrets)
 
 # collect markdown files
 dir_path = "./"
@@ -85,7 +84,8 @@ codey_models = [
 
 image_models = {
     "Imagen 2": "imagegeneration@006",
-    "Dall-E 3": "dall-e-3"
+    "Dall-E 3": "dall-e-3",
+    "SD3 Large Turbo": "sd3-large-turbo"
 }
 
 google_image_models = [
@@ -94,4 +94,8 @@ google_image_models = [
 
 openai_image_models = [
     "Dall-E 3"
+]
+
+stability_image_models = [
+    "SD3 Large Turbo"
 ]
