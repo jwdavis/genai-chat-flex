@@ -8,6 +8,7 @@ import re
 def generate_image(prompt, empty, model_name="", parent=None):
     response = None
     error = None
+
     try:
         client = OpenAI(api_key=secrets['openai_api_key'])
         with empty:
@@ -22,6 +23,7 @@ def generate_image(prompt, empty, model_name="", parent=None):
                 )
         image = response.data[0]
         empty.image(base64.b64decode(image.b64_json))
+
     except Exception as e:
         match = re.search(r"'message': '([^']*)'", e.message)
         if match:
@@ -37,4 +39,5 @@ def generate_image(prompt, empty, model_name="", parent=None):
             </div>
         """
         empty.markdown(warning, unsafe_allow_html=True)
+        
     return response, error

@@ -5,8 +5,8 @@ import streamlit as st
 def generate_image(prompt, empty, model_name="", parent=None):
     response = None
     error = None
-    try:
 
+    try:
         model = ImageGenerationModel.from_pretrained("imagegeneration@006")
         with empty:
             with st.spinner("Generating Image..."):
@@ -22,6 +22,7 @@ def generate_image(prompt, empty, model_name="", parent=None):
             return
         image = response.images[0]
         empty.image(image._image_bytes)
+
     except Exception as e:
         warning = f"""
             <div class="warn_callout">
@@ -32,4 +33,5 @@ def generate_image(prompt, empty, model_name="", parent=None):
             </div>
         """
         empty.markdown(warning, unsafe_allow_html=True)
+        
     return response, error

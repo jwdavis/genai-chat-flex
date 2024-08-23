@@ -77,10 +77,12 @@ def get_response(prompt, empty, chat=True, model_name="", parent=None):
     )
 
     response = ""
+
     try:
         for result in results:
             response += result.text
             empty.markdown(response, unsafe_allow_html=True)
+
     except ResponseValidationError as e:
         last_part = e.responses[-1].candidates[0].to_dict()
         warning = f"""
@@ -98,7 +100,9 @@ def get_response(prompt, empty, chat=True, model_name="", parent=None):
         else:
             parent.markdown(warning, unsafe_allow_html=True)
             parent.json(last_part, expanded=False)
+
     if chat:
         st.session_state["gemini_chat_client"] = chat_client
         st.session_state["messages"] = get_chat_messages(chat_client)
+        
     return 

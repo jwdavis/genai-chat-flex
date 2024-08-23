@@ -1,5 +1,5 @@
-from google.cloud import secretmanager
 import os
+from google.cloud import secretmanager
 
 project_id = os.environ['GOOGLE_CLOUD_PROJECT']
 region = os.environ['GOOGLE_CLOUD_REGION']

@@ -44,6 +44,7 @@ def get_response(prompt,
         messages= messages,
         stream=True
     )
+
     response = ""
     try:
         for event in stream:
@@ -60,6 +61,7 @@ def get_response(prompt,
         messages.append(response_message)
         if chat:
             st.session_state['messages'] = messages
+
     except ClaudeError as e:
         warning = f"""
             <div class="warn_callout">
@@ -72,6 +74,7 @@ def get_response(prompt,
         else:
             parent.markdown(warning, unsafe_allow_html=True)
             parent.json(event)
+
     except Exception as e:
         warning = f"""
             <div class="warn_callout">
@@ -84,4 +87,5 @@ def get_response(prompt,
         else:
             parent.markdown(warning, unsafe_allow_html=True)
             parent.json(event)
+    
     return

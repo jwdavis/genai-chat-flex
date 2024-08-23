@@ -68,22 +68,26 @@ def get_response(prompt, response_container):
     )
 
     response = ""
+
     try:
         for result in results:
             if (result._prediction_response.predictions[0]['safetyAttributes'][0]['blocked']):
                 raise RequestBlocked('Blocked content detected')
             response += result.text
             response_container.markdown(response, unsafe_allow_html=True)
+
     except RequestBlocked as e:
         st.markdown(f"""
             <div class="warn_callout">
                 This response was cut off due to blocked content.
             </div>
         """, unsafe_allow_html=True)
+
     except Exception as e:
         st.write(e)
     st.session_state["non_gemini_chat_client"] = chat
     st.session_state["messages"] = get_chat_messages(chat)
+
     return
 
 # need to handle chat too
@@ -134,12 +138,15 @@ def get_text_response(prompt, response_container, model_name, parent=None):
                 raise RequestBlocked('Blocked content detected')
             response += result.text
             response_container.markdown(response, unsafe_allow_html=True)
+
     except RequestBlocked as e:
         parent.markdown(f"""
             <div class="warn_callout">
                 This response was cut off due to blocked content.
             </div>
         """, unsafe_allow_html=True)
+
     except Exception as e:
         parent.write(e)
+        
     return

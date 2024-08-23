@@ -21,7 +21,7 @@ st.markdown(md_dict['styles'], unsafe_allow_html=True)
 
 def clear_chat():
     """
-    Clears the chat messages by resetting the 'messages' session state to contain only the initial assistant message.
+    Clears the chat messages and resets the chat clients.
     """
     st.session_state["messages"] = []
     
@@ -54,7 +54,7 @@ def show_sidebar():
         
 def show_intro():
     """
-    Displays the introduction section of the GenAI Chat application.
+    Displays the introduction section of the GenAI Playground application.
     """
     st.image(
         "https://www.roitraining.com/wp-content/uploads/2017/02/ROI-logo.png",
@@ -63,11 +63,10 @@ def show_intro():
     st.title("Generative AI Playground - Chat")
     st.divider()
 
-# initialize state
+
 if "model_name" not in st.session_state:
     st.session_state["model_name"] = 'Gemini-Pro 1.5'
     
-# begin page display
 show_sidebar()
 show_intro()
 
@@ -86,7 +85,6 @@ if "non_gemini_chat_client" in st.session_state:
 for msg in st.session_state["messages"]:
     st.chat_message(msg['role']).markdown(msg['content'], unsafe_allow_html=True)
 
-# display chat input
 if prompt := st.chat_input():
     st.chat_message("user").write(prompt)
     with st.chat_message("assistant"):

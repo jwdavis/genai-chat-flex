@@ -53,7 +53,9 @@ def get_response(prompt,
         top_p=1,
         n=1
     )
+
     response = ""
+
     try:
         for chunk in stream:
             if chunk.choices[0].delta.content is not None:
@@ -63,9 +65,12 @@ def get_response(prompt,
             "role": "assistant",
             "content": response
         }
+
         messages.append(response_message)
+
         if chat:
             st.session_state['messages'] = messages[2:]
+
     except Exception as e:
         warning = f"""
             <div class="warn_callout">
@@ -78,4 +83,5 @@ def get_response(prompt,
         else:
             parent.markdown(warning, unsafe_allow_html=True)
             parent.write(e)
+            
     return
